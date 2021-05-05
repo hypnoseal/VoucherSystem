@@ -1,0 +1,424 @@
+{
+    "ApplicationName": "VoucherSystem",
+    "DisplayName": "Voucher System",
+    "Description": "A simple voucher system.",
+    "ApplicationRoles": [
+        {
+            "Name": "Banker",
+            "Description": "User that is in control of the bank, supplies funds and issues vouchers."
+        },
+        {
+            "Name": "Client",
+            "Description": "Client that can redeem vouchers and transfer funds."
+        }
+    ],
+    "Workflows": [
+        {
+            "Name": "Bank",
+            "DisplayName": "Bank",
+            "Description": "Supplies funds, maintains client accounts and issues vouchers.",
+            "Initiators": [ "Banker" ],
+            "StartState": "BankFunded",
+            "Properties": [
+                {
+                    "Name": "State",
+                    "DisplayName": "State",
+                    "Description": "Holds the state of the bank.",
+                    "Type": {
+                        "Name": "state"
+                    }
+                },
+                {
+                    "Name": "BankAddress",
+                    "DisplayName": "Bank Address (Contract Address)",
+                    "Description": "The blockchain address for the bank smart contract.",
+                    "Type": {
+                        "Name": "contract"
+                    }
+                },
+                {
+                    "Name": "BankerAddress",
+                    "DisplayName": "Banker Address (Wallet Address)",
+                    "Description": "User account with bank permissions.",
+                    "Type": {
+                        "Name": "Banker"
+                    }
+                },
+                {
+                    "Name": "MoneySupply",
+                    "DisplayName": "Total Money Supply",
+                    "Description": "The total amount of funds within the entire voucher system. This is the sum of the Bank's Balance, all of the Clients' balances and all of the vouchers' balances.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "BankBalance",
+                    "DisplayName": "Bank Balance",
+                    "Description": "The total amount of funds available to the bank for issuing vouchers or distributing to clients.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "AmountInWallets",
+                    "DisplayName": "Amount in Wallets",
+                    "Description": "The total amount in funds in client wallets.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "AmountInVouchers",
+                    "DisplayName": "Amount in Vouchers",
+                    "Description": "The total amount of funds within vouchers.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "NumVouchers",
+                    "DisplayName": "Number of Vouchers",
+                    "Description": "The number of issued vouchers that are in circulation. Does not include redeemed or burned vouchers.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                }
+            ],
+            "Constructor": {
+                "Parameters": [
+                    {
+                        "Name": "_initialSupply",
+                        "Description": "The initial money supply injected into the voucher system.",
+                        "DisplayName": "Initialy Supply",
+                        "Type": {
+                            "Name": "int"
+                        }
+                    }
+                ]
+            },
+            "Functions": [
+                {
+                    "Name": "Supply",
+                    "DisplayName": "Supply Funds",
+                    "Description": "Add funds to the money supply (and bank balance).",
+                    "Parameters": [
+                        {
+                            "Name": "_amount",
+                            "Description": "The amount of funds to supply.",
+                            "DisplayName": "Amount to Supply",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Name": "Burn",
+                    "DisplayName": "Burn Funds",
+                    "Description": "Remove funds from the money supply (and bank balance).",
+                    "Parameters": [
+                        {
+                            "Name": "_amount",
+                            "Description": "The amount of funds to burn.",
+                            "DisplayName": "Amount to Burn",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Name": "Transfer",
+                    "DisplayName": "Transfer Funds",
+                    "Description": "Transfer funds between wallets.",
+                    "Parameters": [
+                        {
+                            "Name": "_payee",
+                            "Description": "The address of the payee's wallet.",
+                            "DisplayName": "Payee's Wallet Address",
+                            "Type": {
+                                "Name": "address"
+                            }
+                        },
+                        {
+                            "Name": "_amount",
+                            "Description": "The amount to transfer to the payee.",
+                            "DisplayName": "Amount to Transfer",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Name": "IssueVoucher",
+                    "DisplayName": "Issue Voucher",
+                    "Description": "Issues a voucher into the voucher system.",
+                    "Parameters": [
+                        {
+                            "Name": "_amount",
+                            "Description": "Amount of funds to assign to voucher.",
+                            "DisplayName": "Voucher Amount",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        },
+                        {
+                            "Name": "_secret",
+                            "Description": "The voucher's secret.",
+                            "DisplayName": "Voucher Secret",
+                            "Type": {
+                                "Name": "string"
+                            }
+                        },
+                        {
+                            "Name": "_nonce",
+                            "Description": "The voucher's nonce.",
+                            "DisplayName": "Voucher Nonce",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Name": "RedeemVoucher",
+                    "DisplayName": "Redeem Voucher",
+                    "Description": "Redeem a valid voucher and send the funds to a specifc payee.",
+                    "Parameters": [
+                        {
+                            "Name": "_ID",
+                            "Description": "The Voucher ID.",
+                            "DisplayName": "Voucher ID",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        },
+                        {
+                            "Name": "_payee",
+                            "Description": "The address of the payee's wallet.",
+                            "DisplayName": "Payee Address",
+                            "Type": {
+                                "Name": "address"
+                            }
+                        },
+                        {
+                            "Name": "_secret",
+                            "Description": "The voucher's secret.",
+                            "DisplayName": "Voucher Secret",
+                            "Type": {
+                                "Name": "string"
+                            }
+                        },
+                        {
+                            "Name": "_nonce",
+                            "Description": "The voucher's nonce.",
+                            "DisplayName": "Voucher Nonce",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "States": [
+                {
+                    "Name": "BankFunded",
+                    "DisplayName": "Bank Funded",
+                    "Description": "The bank is open and funded.",
+                    "PercentComplete": 33,
+                    "Style": "Success",
+                    "Transitions": [
+                        {
+                            "AllowedRoles": [],
+                            "AllowedInstanceRoles": [],
+                            "Desciption": "Issue Vouchers",
+                            "Function": "IssueVoucher",
+                            "NextStates": [ "VouchersInCirculation" ],
+                            "DisplayName": "Vouchers in Circulation!"
+                        }
+                    ]
+                },
+                {
+                    "Name": "VouchersInCirculation",
+                    "DisplayName": "Vouchers in Circulation!",
+                    "Description": "Vouchers are issued and are in circulation within the voucher system.",
+                    "PercentComplete": 100,
+                    "Style": "Success",
+                    "Transitions": [
+                        {
+                            "AllowedRoles": [],
+                            "AllowedInstanceRoles": [],
+                            "Desciption": "Issue Vouchers",
+                            "Function": "IssueVoucher",
+                            "NextStates": [ "VouchersInCirculation" ],
+                            "DisplayName": "Vouchers in Circulation!"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Voucher",
+            "DisplayName": "Voucher",
+            "Description": "A voucher is worth a certain value and holds a secret passphrase. Anyone can redeem a voucher if they know the passphrase.",
+            "Initiators": [ "Banker" ],
+            "StartState": "VoucherIssued",
+            "Properties": [
+                {
+                    "Name": "State",
+                    "DisplayName": "State",
+                    "Description": "Holds the state of the bank.",
+                    "Type": {
+                        "Name": "state"
+                    }
+                },
+                {
+                    "Name": "IssuingBank",
+                    "DisplayName": "Issuing Bank (Address)",
+                    "Description": "The address for the issuing bank (Contract Address).",
+                    "Type": {
+                        "Name": "address"
+                    }
+                },
+                {
+                    "Name": "Amount",
+                    "DisplayName": "Voucher Amount",
+                    "Description": "The amount assigned to the voucher.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "Secret",
+                    "DisplayName": "Voucher Secret",
+                    "Description": "The voucher's secret.",
+                    "Type": {
+                        "Name": "string"
+                    }
+                },
+                {
+                    "Name": "Nonce",
+                    "DisplayName": "Voucher Nonce",
+                    "Description": "The voucher's nonce.",
+                    "Type": {
+                        "Name": "int"
+                    }
+                },
+                {
+                    "Name": "Payee",
+                    "DisplayName": "Payee Address",
+                    "Description": "The payee's address.",
+                    "Type": {
+                        "Name": "Client"
+                    }
+                }
+            ],
+            "Constructor": {
+                "Parameters": [
+                    {
+                        "Name": "_issuingBank",
+                        "Description": "The address for the issuing bank (Contract Address).",
+                        "DisplayName": "Issuing Bank (Address)",
+                        "Type": {
+                            "Name": "address"
+                        }
+                    },
+                    {
+                        "Name": "_amount",
+                        "Description": "The amount assigned to the voucher.",
+                        "DisplayName": "Voucher Amount",
+                        "Type": {
+                            "Name": "int"
+                        }
+                    },
+                    {
+                        "Name": "_secret",
+                        "Description": "The voucher's secret.",
+                        "DisplayName": "Voucher Secret",
+                        "Type": {
+                            "Name": "string"
+                        }
+                    },
+                    {
+                        "Name": "_nonce",
+                        "Description": "The voucher's nonce.",
+                        "DisplayName": "Voucher Nonce",
+                        "Type": {
+                            "Name": "int"
+                        }
+                    }
+                ]
+            },
+            "Functions": [
+                {
+                    "Name": "Redeem",
+                    "DisplayName": "Redeem Voucher",
+                    "Description": "Redeems a voucher if the secret and nonce match.",
+                    "Parameters": [
+                        {
+                            "Name": "_issuingBank",
+                            "Description": "The address for the issuing bank (Contract Address).",
+                            "DisplayName": "Issuing Bank (Address)",
+                            "Type": {
+                                "Name": "address"
+                            }
+                        },
+                        {
+                            "Name": "_payee",
+                            "Description": "The address of the payee's wallet.",
+                            "DisplayName": "Payee's Wallet Address",
+                            "Type": {
+                                "Name": "address"
+                            }
+                        },
+                        {
+                            "Name": "_secret",
+                            "Description": "The voucher's secret.",
+                            "DisplayName": "Voucher Secret",
+                            "Type": {
+                                "Name": "string"
+                            }
+                        },
+                        {
+                            "Name": "_nonce",
+                            "Description": "The voucher's nonce.",
+                            "DisplayName": "Voucher Nonce",
+                            "Type": {
+                                "Name": "int"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "States": [
+                {
+                    "Name": "VoucherIssued",
+                    "DisplayName": "Voucher Issued",
+                    "Description": "The voucher is issued.",
+                    "PercentComplete": 50,
+                    "Style": "Success",
+                    "Transitions": [
+                        {
+                            "AllowedRoles": [],
+                            "AllowedInstanceRoles": [],
+                            "Description": "Redeem Voucher",
+                            "Function": "Redeem",
+                            "NextStates": [ "VoucherRedeemed" ],
+                            "DisplayName": "Voucher Redeemed"
+                        }
+                    ]
+                },
+                {
+                    "Name": "VoucherRedeemed",
+                    "DisplayName": "Voucher Redeemed",
+                    "Description": "The voucher is redeemed.",
+                    "PercentComplete": 100,
+                    "Style": "Failure",
+                    "Transitions": []
+                }
+            ]
+        }
+    ]
+}
